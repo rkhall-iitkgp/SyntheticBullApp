@@ -1,0 +1,99 @@
+name: synthetic-bull-stack
+
+services:
+  engine:
+    build:
+      context: ./Synthetic-Bull/backend
+      dockerfile: Dockerfile
+    container_name: synthetic-bull-engine
+    environment:
+      DB_DIR: /data
+    volumes:
+      - ./data:/data
+    ports:
+      - "9001:9001"
+    restart: unless-stopped
+    networks:
+      - bull-net
+
+  admin_api:
+    build:
+      context: ./Synthetic-Bull/backend/admin_api
+      dockerfile: Dockerfile
+    container_name: synthetic-bull-admin
+    depends_on:
+      - engine
+    environment:
+      DB_DIR: /data
+      ENGINE_WS_URL: ws://engine:9001
+    volumes:
+      - ./data:/data
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    networks:
+      - bull-net
+
+  alpha_bot:
+    build:
+      context: ./Synthetic-Bull/bots
+      dockerfile: Dockerfile
+    container_name: synthetic-bull-alpha
+    depends_on:
+      - engine
+    environment:
+      EXCHANGE_WS_URL: ws://engine:9001
+      BOT_API_KEY: ${ALPHA_BOT_API_KEY:-}
+      ALPHA_BOT_PORT: "3001"
+      PYTHONUNBUFFERED: "1"
+    command: python -m alpha.main
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    networks:
+      - bull-net
+
+  market_maker_bot:
+    build:
+      context: ./Synthetic-Bull/bots
+      dockerfile: Dockerfile
+    container_name: synthetic-bull-market-maker
+    depends_on:
+      - engine
+    environment:
+      EXCHANGE_WS_URL: ws://engine:9001
+      BOT_API_KEY: ${MM_BOT_API_KEY:-}
+      MM_BOT_PORT: "3002"
+      PYTHONUNBUFFERED: "1"
+    command: python -m market_maker.main
+    ports:
+      - "3002:3002"
+    restart: unless-stopped
+    networks:
+      - bull-net
+
+  frontend:
+    build:
+      context: ./Synthetic-Bull-Frontend
+      dockerfile: Dockerfile
+    container_name: synthetic-bull-frontend
+    depends_on:
+      - engine
+      - admin_api
+      - alpha_bot
+      - market_maker_bot
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+      VITE_WS_URL: ws://localhost:9001
+      VITE_ALPHA_API_BASE: http://localhost:3001
+      VITE_MM_API_BASE: http://localhost:3002
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - bull-net
+
+networks:
+  bull-net:
+    driver: bridge
