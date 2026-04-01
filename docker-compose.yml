@@ -3,7 +3,7 @@ name: synthetic-bull-stack
 services:
   engine:
     build:
-      context: ./Synthetic-Bull/backend
+      context: ./backend/backend
       dockerfile: Dockerfile
     container_name: synthetic-bull-engine
     environment:
@@ -18,7 +18,7 @@ services:
 
   admin_api:
     build:
-      context: ./Synthetic-Bull/backend/admin_api
+      context: ./backend/backend/admin_api
       dockerfile: Dockerfile
     container_name: synthetic-bull-admin
     depends_on:
@@ -36,7 +36,7 @@ services:
 
   alpha_bot:
     build:
-      context: ./Synthetic-Bull/bots
+      context: ./backend/bots
       dockerfile: Dockerfile
     container_name: synthetic-bull-alpha
     depends_on:
@@ -55,7 +55,7 @@ services:
 
   market_maker_bot:
     build:
-      context: ./Synthetic-Bull/bots
+      context: ./backend/bots
       dockerfile: Dockerfile
     container_name: synthetic-bull-market-maker
     depends_on:
@@ -74,7 +74,7 @@ services:
 
   frontend:
     build:
-      context: ./Synthetic-Bull-Frontend
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: synthetic-bull-frontend
     depends_on:
