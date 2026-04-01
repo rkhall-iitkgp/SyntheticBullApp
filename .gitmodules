@@ -1,0 +1,6 @@
+[submodule "frontend"]
+	path = frontend
+	url = git@github.com:rkhall-iitkgp/Synthetic-Bull-Frontend.git
+[submodule "backend"]
+	path = backend
+	url = git@github.com:rkhall-iitkgp/Synthetic-Bull.git
