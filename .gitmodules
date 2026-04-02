@@ -5,4 +5,4 @@
 [submodule "backend"]
 	path = backend
 	url = git@github.com:rkhall-iitkgp/Synthetic-Bull.git
-	branch = bot-add
+	branch = new-bot-01
