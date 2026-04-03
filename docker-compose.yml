@@ -36,14 +36,14 @@ services:
 
   alpha_bot:
     build:
-      context: ./backend/bots
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: bots/Dockerfile
     container_name: synthetic-bull-alpha
     depends_on:
       - engine
     environment:
       EXCHANGE_WS_URL: ws://engine:9001
-      BOT_API_KEY: ${ALPHA_BOT_API_KEY:-}
+      BOT_API_KEY: sk_live_2f55c85f1bf3f19535f4f8763c6bbc51
       ALPHA_BOT_PORT: "3001"
       PYTHONUNBUFFERED: "1"
     command: python -m alpha.main
@@ -55,14 +55,14 @@ services:
 
   market_maker_bot:
     build:
-      context: ./backend/bots
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: bots/Dockerfile
     container_name: synthetic-bull-market-maker
     depends_on:
       - engine
     environment:
       EXCHANGE_WS_URL: ws://engine:9001
-      BOT_API_KEY: ${MM_BOT_API_KEY:-}
+      BOT_API_KEY: sk_live_1641719b61f46e9efe1a543ee948307b
       MM_BOT_PORT: "3002"
       PYTHONUNBUFFERED: "1"
     command: python -m market_maker.main
